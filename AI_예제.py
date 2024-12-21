@@ -31,11 +31,10 @@ class Validator:
         except ValueError:
             return False
 
-    @staticmethod
     def validate_student_id(student_id):
         return len(student_id) == 5 and student_id.isdigit()
 
-class InputHandler:
+class InputHandler:    
     @staticmethod
     def get_student_id():
         while True:
@@ -52,8 +51,10 @@ class InputHandler:
                 return student_name
             print("입력하신 값에 한글 외의 문자가 포함되어 있습니다.")
 
-    @staticmethod
-    def student_identifier(student_id, student_name):
+    def student_identifier(self):
+        student_id = self.get_student_id()
+        student_name = self.get_student_name()
+
         return f"{student_id} {student_name}"
 
     @staticmethod
@@ -85,22 +86,20 @@ class Calculator:
         return sum(scores.values()) / len(scores)
 
 class StudentDatabaseHandler:
+    inputHandler = InputHandler()
+    
     def __init__(self):
         self.file_manager = FileManager()
         self.student_and_scores = self.file_manager.load_data()
 
     def add_student(self):
-        student_id = InputHandler.get_student_id()
-        student_name = InputHandler.get_student_name()
-        student = InputHandler.student_identifier(student_id, student_name)
-        scores = InputHandler.get_scores()
+        student = self.inputHandler.student_identifier()
+        scores = self.inputHandler.get_scores()
         self.student_and_scores[student] = scores
         self.file_manager.save_data(self.student_and_scores)
 
     def view_student(self):
-        student_id = InputHandler.get_student_id()
-        student_name = InputHandler.get_student_name()
-        student = InputHandler.student_identifier(student_id, student_name)
+        student = self.inputHandler.student_identifier()
         if student in self.student_and_scores:
             self.print_student_scores(student, self.student_and_scores[student])
         else:
@@ -118,8 +117,8 @@ class StudentDatabaseHandler:
         max_subject = Calculator.calculate_max(scores)
         min_subject = Calculator.calculate_min(scores)
         avg_score = Calculator.calculate_average(scores)
-        print(f"최고점수: {max_subject} - {scores[max_subject]}")
-        print(f"최저점수: {min_subject} - {scores[min_subject]}")
+        print(f"최고점수: {scores[max_subject]} ({max_subject})")
+        print(f"최저점수: {scores[min_subject]} ({min_subject})")
         print(f"평균점수: {round(avg_score, 2)}")
 
 def main():
